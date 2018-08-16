@@ -20,8 +20,32 @@
     <script src="https://maps.googleapis.com/maps/api/js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 
-    <script type="text/javascript">
-        // setup map and listen to deviceready        
+   <script>
+
+var pin = [
+    {"name":"The Crown Pub","lat":"40.586255","lng":"-105.076543","url":"http://www.crownpub.net"},
+    {"name":"Social","lat":"40.5872801","lng":"-105.0783097","url":"http://www.socialfortcollins.com/"},
+    {"name":"Elliot's Martini Bar","lat":"40.5884398","lng":"-105.0766902","url":"http://www.elliotsmartini.com/"},
+    {"name":"Coopersmith's Pub & Brewing","lat":"40.587348","lng":"-105.07566","url":"http://www.coppermuse.com/"},
+    {"name":"The Mayor of Old Town","lat":"40.578889","lng":"-105.078713","url":"http://www.crownpub.net"},
+    {"name":"Trailhead Tavern","lat":"40.587235","lng":"-105.078429","url":"http://www.crownpub.net"},
+    {"name":"Bar Louie","lat":"40.542339","lng":"-105.072624","url":"http://www.crownpub.net"},
+    {"name":"CB & Potts","lat":"40.543631","lng":"-105.073941","url":"http://www.crownpub.net"},
+    {"name":"The Forge Public House","lat":"40.58881","lng":"-105.07551","url":"http://www.crownpub.net"},
+    {"name":"Tap & Handle","lat":"40.583739","lng":"-105.077551","url":"http://www.crownpub.net"},
+    {"name":"Blind Pig","lat":"40.588191","lng":"-105.074905","url":"http://www.crownpub.net"},
+    {"name":"Avogadro's Number","lat":"40.579534","lng":"-105.079213","url":"http://www.crownpub.net"}
+];  
+
+
+
+
+
+var markersArray = [], bounds;
+var myLat = 0, myLng = 0; 
+var bearing, distance;
+var dataStatus = 0;                
+// setup map and listen to deviceready        
 $( document ).ready(function() {
     document.addEventListener("deviceready", onDeviceReady, false);
 });
@@ -49,6 +73,72 @@ function startCamera() {
         });
 }  
 
+
+// setup google maps api        
+function setupMap(){
+    $("#map").height($(window).height()-60);
+    var mapOptions = {
+        zoom: 13,
+        mapTypeControl: false,
+        streetViewControl: false,
+        navigationControl: true,
+        scrollwheel: false,
+        navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById("map"), mapOptions);
+}        
+// toggle between list view and map view        
+function toggleView(){
+    if($(".listView").is(":visible")){
+        $(".listView").hide();
+        $("#map").height($(window).height()-60);
+        $(".mapView").fadeIn(
+            function(){
+                google.maps.event.trigger(map, "resize");
+                map.fitBounds(bounds);});
+        $("#viewbtn").html("List");
+    } else {
+        $(".mapView").hide();
+        $(".listView").fadeIn();
+        $("#viewbtn").html("Map");
+    }
+}
+// get data from API and store in array, add to list view and create markers on map, calculate         
+function loadData(){
+    dataStatus = "loading";
+    markersArray = [];
+    bounds = new google.maps.LatLngBounds();
+    // add blue gps marker
+    var icon = new google.maps.MarkerImage('http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png',new google.maps.Size(30, 28),new google.maps.Point(0,0),new google.maps.Point(9, 28));
+    var gpsMarker = new google.maps.Marker({position: new google.maps.LatLng(myLat, myLng), map: map, title: "My Position", icon:icon});
+    bounds.extend(new google.maps.LatLng(myLat, myLng));
+    markersArray.push(gpsMarker);
+    // add all location markers to map and list view and array
+    for(var i=0; i< pin.length; i++){
+        addMarker(i);
+        relativePosition(i);
+
+        $(".listItems").append("<div class='item'>"+pin[i].name+"</div>");
+
+      
+    }
+    map.fitBounds(bounds);
+    google.maps.event.trigger(map, "resize");
+    dataStatus = "loaded";   
+}
+// add marker to map and in array        
+function addMarker(i){
+    var marker = new google.maps.Marker({position: new google.maps.LatLng(pin[i].lat, pin[i].lng), map: map, title: pin[i].name});
+    bounds.extend(new google.maps.LatLng(pin[i].lat, pin[i].lng));
+    markersArray.push(marker);
+} 
+// clear all markers from map and array        
+function clearMarkers() {
+    while (markersArray.length) {
+        markersArray.pop().setMap(null);
+    }
+}        
 // calulate distance and bearing value for each of the points wrt gps lat/lng        
 function relativePosition(i){
     var pinLat = pin[i].lat;
@@ -205,6 +295,24 @@ function onAccelerometerError() {
     document.getElementById('log').innerHTML += "onError.";
 }
 
+ function doSnapshot() {
+        //hide snapbtn so it will not be in snapshot image
+        document.getElementById("snapbtn").style.display = "none";
+        
+        //give dom chance to hide snapbtn before image capture
+        setTimeout( function() { 
+            ezar.snapshot(  
+                function(data) {
+                    alert("Snapshot complete.\nSee Gallery for image");
+                    document.getElementById("snapbtn").style.display = "block";
+                }, 
+                function(err) {
+                    alert("Error: " + err);
+                    document.getElementById("snapbtn").style.display = "block";
+                },
+                {"saveToPhotoAlbum":true}
+            )}, 10);
+    } 
     </script>
 
 
@@ -249,16 +357,13 @@ body {background-color:transparent;font-family:Impact;margin:0;overflow-x:hidden
     </style>
 
 
-    <script type="text/javascript">
- 
-
-    </script>
-
 
 
 
   </head>
-  <body id="body">  
+
+
+  <body id="body" style="background-color: transparent">  
     <div id="arView" style="background-color: transparent">
         <div class="arMessage">&uarr;<br>Tilt down to see all places</div>
         <br>
