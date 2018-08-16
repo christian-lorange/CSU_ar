@@ -17,206 +17,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
     <script src="lib/jquery/jquery-1.8.2.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 
-    
-
-
-
-    <style>
-body {background-color:transparent;font-family:Impact;margin:0;overflow-x:hidden;-webkit-user-select: none;}
-.navbar {background-color:#222;height:40px;padding:10px;text-align:center;color:#fff;font-size:20px;font-weight:bold;line-height:40px;}
-.navtitle {text-align:center;margin:auto}
-.navbtn {background-color:#333;padding:5px 10px;height:30px;color:#fff;font-size:18px;font-weight:bold;line-height:30px;border-radius:4px;border:1px solid #666} 
-#actionbtn {float:right;}
-#viewbtn {float:left;}
-.query {padding:10px;background-color:#aaa;border-bottom:1px solid #fff;font-size:14px;font-weight:bold;color:#222;}
-.item {padding:20px 10px; background-color:#eee;border-bottom:1px solid #fff;font-size:18px;color:#333;text-shadow:0 1px #fff}
-.searchbox {padding:5px;background-color:#eee;border-bottom:1px solid #fff;}
-#search {box-sizing: border-box;width:100%;height:40px;font-size:16px;border-radius:20px;border:1px solid #bbb}
-#arView{display:none;}
-#arView{padding:30px 0; height:70px;text-align:center}
-.arMessage {color:#ddd;font-size:14px}
-#spot {text-align:center}
-.name, .distance {text-shadow:0 1px #666}
-.name {padding:15px;font-weight:bold;background-color:rgba(219,233,233,0.5);border-radius:10px;margin-bottom:10px}
-#direction {color:#fff;font-size:20px;padding:15px;font-weight:bold;;background-color:#dbe9e9;border-radius:10px;display:inline-block;margin-bottom:10px;width:40px;line-height:40px}
-.distance {font-size:14px;font-weight:normal;}
-#debug {border:1px solid #999;display:none}
-.heading {background-color:#999;color:#eee;padding:5px;}
-#compass, #accelerometer, #geolocation {padding:5px}
-
-.snap {
-    position: absolute;
-    right: 31px;
-    bottom: 26px;
-}
-
-.attributing {
-    color: rgb(255, 213, 0);
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-}
-    </style>
-
-
     <script type="text/javascript">
- 
-
-    </script>
-
-
-
-
-  </head>
-  <body id="body">  
-    <div id="arView" style="background-color: transparent">
-        <div class="arMessage">&uarr;<br>Tilt down to see all places</div>
-        <br>
-        <div class="arMessage">&larr; Move the device around to find Passport locations near you. &rarr;</div>
-        <br>
-        <div id="direction"></div>
-        <br>
-        <div id="spot"></div>
-        
-        <div class="attributing">
-            ezAR Technologies
-        </div>
-    </div>
-    <div id="topView" style="background-color: white">
-        
-<form action="" method="post">
-      <h2>How do you commute to work:</h2>
-      <label><input type="checkbox" name="vehicles[]" value="Bike"> Crown Pub </label><br />
-      <label><input type="checkbox" name="vehicles[]" value="Car"> Social </label><br />
-      <label><input type="checkbox" name="vehicles[]" value="Train"> Elliots </label><br />
-      <label><input type="checkbox" name="vehicles[]" value="Bus"> Coopersmiths </label><br />
-
-    </form>
-
-
-    </div>
-    <div id="debug">  
-        <div class="heading">Geolocation</div>
-        <div id="geolocation"></div>
-        <div class="heading">Compass</div>
-        <div id="compass"></div>
-        <div class="heading">Accelerometer</div>
-        <div id="accelerometer"></div>
-        <div class="heading">Log</div>
-        <div id="log"></div>
-    </div>  
-
-
-
-
-
-    
-     <script>
-     (function($) {
-
-        "use_strict";
-
-        // This array will store the values of the "checked" vehicle checkboxes
-        var cboxArray = [];
-              
-        // Check if the vehicle value has already been added to the array and if not - add it
-        function itemExistsChecker(cboxValue) {
-                
-          var len = cboxArray.length;
-                
-          if (len > 0) {
-            for (var i = 0; i < len; i++) {
-              if (cboxArray[i] == cboxValue) {
-                return true;
-              }
-            }
-          }
-                
-          cboxArray.push(cboxValue);
-        } 
-              
-        $('input[type="checkbox"]').each(function() {
-                
-          var cboxValue = $(this).val();
-          var cboxChecked = localStorage.getItem(cboxValue) == 'true' ? true : false;
-                
-          // On page load check if any of the checkboxes has previously been selected and mark it as "checked"
-          if (cboxChecked) {
-
-            $(this).prop('checked', true);
-            itemExistsChecker(cboxValue);
-
-          }
-              
-          // On checkbox change add/remove the vehicle value from the array based on the choice
-          $(this).change(function() {
-            
-            localStorage.setItem(cboxValue, $(this).is(':checked'));
-                  
-            if ($(this).is(':checked')) {
-
-              itemExistsChecker(cboxValue);
-
-            } else {
-
-              // Delete the vehicle value from the array if its checkbox is unchecked
-              var cboxValueIndex = cboxArray.indexOf(cboxValue);
-              
-              if (cboxValueIndex >= 0) {
-                cboxArray.splice( cboxValueIndex, 1 );
-              }
-                    
-            }
-                  
-            console.log(cboxArray);
-     
-
-
-        var lookup=[0,0,0,0];
-        var pin =[0,0,0,0];
-
-
-        var check=["Bike","Car","Train","Bus"]
-
-         for(var i=0; i< pin.length; i++){
-        if(cboxArray.includes(check[i])){
-
-          lookup[i]=1;}
-
-          else{
-            lookup[i]=0;
-            
-                      }
-  
-}
-
-                var pin = [
-    {"name":"The Crown Pub","lat":"40.586255","lng":"-105.076543","url":"http://www.crownpub.net"},
-    {"name":"Social","lat":"40.5872801","lng":"-105.0783097","url":"http://www.socialfortcollins.com/"},
-    {"name":"Elliot's Martini Bar","lat":"40.5884398","lng":"-105.0766902","url":"http://www.elliotsmartini.com/"},
-    {"name":"Coopersmith's Pub & Brewing","lat":"40.587348","lng":"-105.07566","url":"http://www.coppermuse.com/"},
-
-];  
-        $(".listItems").html("");
-        for(var i=0; i< pin.length; i++){
-        if(lookup[i]>0){
-        $(".listItems").append("<div class='item'>"+pin[i].name+"</div>");}
-            }
-                  
-          });
-
-        });
-
-       
-
-       
-       
-      })(jQuery);
-
-
-// setup map and listen to deviceready        
+        // setup map and listen to deviceready        
 $( document ).ready(function() {
     document.addEventListener("deviceready", onDeviceReady, false);
 });
@@ -400,24 +205,213 @@ function onAccelerometerError() {
     document.getElementById('log').innerHTML += "onError.";
 }
 
+    </script>
+
+
+
+    <style>
+body {background-color:transparent;font-family:Impact;margin:0;overflow-x:hidden;-webkit-user-select: none;}
+.navbar {background-color:#222;height:40px;padding:10px;text-align:center;color:#fff;font-size:20px;font-weight:bold;line-height:40px;}
+.navtitle {text-align:center;margin:auto}
+.navbtn {background-color:#333;padding:5px 10px;height:30px;color:#fff;font-size:18px;font-weight:bold;line-height:30px;border-radius:4px;border:1px solid #666} 
+#actionbtn {float:right;}
+#viewbtn {float:left;}
+.query {padding:10px;background-color:#aaa;border-bottom:1px solid #fff;font-size:14px;font-weight:bold;color:#222;}
+.item {padding:20px 10px; background-color:#eee;border-bottom:1px solid #fff;font-size:18px;color:#333;text-shadow:0 1px #fff}
+.searchbox {padding:5px;background-color:#eee;border-bottom:1px solid #fff;}
+#search {box-sizing: border-box;width:100%;height:40px;font-size:16px;border-radius:20px;border:1px solid #bbb}
+.mapView {display:none}
+#map {height:200px;}
+#arView, #topView {display:none;}
+#arView{padding:30px 0; height:70px;text-align:center}
+.arMessage {color:#ddd;font-size:14px}
+#spot {text-align:center}
+.name, .distance {text-shadow:0 1px #666}
+.name {padding:15px;font-weight:bold;background-color:rgba(219,233,233,0.5);border-radius:10px;margin-bottom:10px}
+#direction {color:#fff;font-size:20px;padding:15px;font-weight:bold;;background-color:#dbe9e9;border-radius:10px;display:inline-block;margin-bottom:10px;width:40px;line-height:40px}
+.distance {font-size:14px;font-weight:normal;}
+#debug {border:1px solid #999;display:none}
+.heading {background-color:#999;color:#eee;padding:5px;}
+#compass, #accelerometer, #geolocation {padding:5px}
+
+.snap {
+    position: absolute;
+    right: 31px;
+    bottom: 26px;
+}
+
+.attributing {
+    color: rgb(255, 213, 0);
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+    </style>
+
+
+    <script type="text/javascript">
+ 
 
     </script>
 
-     <div class="listView">
-            <div class="listItems"></div>
 
-        </div>
 
+
+  </head>
+  <body id="body">  
     <div id="arView" style="background-color: transparent">
-
-        <div class="arMessage">&larr; Move the device around to find your building. &rarr;</div>
+        <div class="arMessage">&uarr;<br>Tilt down to see all places</div>
+        <br>
+        <div class="arMessage">&larr; Move the device around to find Passport locations near you. &rarr;</div>
         <br>
         <div id="direction"></div>
         <br>
         <div id="spot"></div>
         
-
+        <div class="attributing">
+            ezAR Technologies
+        </div>
     </div>
+      <div id="topView" style="background-color: white">
+        <div class="navbar">
+            <!--<div id="actionbtn" class="navbtn"> &crarr; </div>-->
+            <div id="viewbtn" class="navbtn" onclick="toggleView()">Map</div>    
+            <div class="navtitle">Nearby</div> 
+        </div>
+        <div class="listView">
+            <div class="listItems"></div>
+
+
+
+
+        </div>
+        <div class="mapView">
+            <div id="map"></div>
+        </div>
+    </div>
+    <div id="debug">  
+        <div class="heading">Geolocation</div>
+        <div id="geolocation"></div>
+        <div class="heading">Compass</div>
+        <div id="compass"></div>
+        <div class="heading">Accelerometer</div>
+        <div id="accelerometer"></div>
+        <div class="heading">Log</div>
+        <div id="log"></div>
+    </div>  
+
+
+
+
+
+
+    
+     <script>
+     (function($) {
+
+        "use_strict";
+
+        // This array will store the values of the "checked" vehicle checkboxes
+        var cboxArray = [];
+              
+        // Check if the vehicle value has already been added to the array and if not - add it
+        function itemExistsChecker(cboxValue) {
+                
+          var len = cboxArray.length;
+                
+          if (len > 0) {
+            for (var i = 0; i < len; i++) {
+              if (cboxArray[i] == cboxValue) {
+                return true;
+              }
+            }
+          }
+                
+          cboxArray.push(cboxValue);
+        } 
+              
+        $('input[type="checkbox"]').each(function() {
+                
+          var cboxValue = $(this).val();
+          var cboxChecked = localStorage.getItem(cboxValue) == 'true' ? true : false;
+                
+          // On page load check if any of the checkboxes has previously been selected and mark it as "checked"
+          if (cboxChecked) {
+
+            $(this).prop('checked', true);
+            itemExistsChecker(cboxValue);
+
+          }
+              
+          // On checkbox change add/remove the vehicle value from the array based on the choice
+          $(this).change(function() {
+            
+            localStorage.setItem(cboxValue, $(this).is(':checked'));
+                  
+            if ($(this).is(':checked')) {
+
+              itemExistsChecker(cboxValue);
+
+            } else {
+
+              // Delete the vehicle value from the array if its checkbox is unchecked
+              var cboxValueIndex = cboxArray.indexOf(cboxValue);
+              
+              if (cboxValueIndex >= 0) {
+                cboxArray.splice( cboxValueIndex, 1 );
+              }
+                    
+            }
+                  
+            console.log(cboxArray);
+     
+
+
+        var lookup=[0,0,0,0];
+        var pin =[0,0,0,0];
+
+
+        var check=["Bike","Car","Train","Bus"]
+
+         for(var i=0; i< pin.length; i++){
+        if(cboxArray.includes(check[i])){
+
+          lookup[i]=1;}
+
+          else{
+            lookup[i]=0;
+            
+                      }
+  
+}
+
+                var pin = [
+    {"name":"The Crown Pub","lat":"40.586255","lng":"-105.076543","url":"http://www.crownpub.net"},
+    {"name":"Social","lat":"40.5872801","lng":"-105.0783097","url":"http://www.socialfortcollins.com/"},
+    {"name":"Elliot's Martini Bar","lat":"40.5884398","lng":"-105.0766902","url":"http://www.elliotsmartini.com/"},
+    {"name":"Coopersmith's Pub & Brewing","lat":"40.587348","lng":"-105.07566","url":"http://www.coppermuse.com/"},
+
+];  
+        $(".listItems").html("");
+        for(var i=0; i< pin.length; i++){
+        if(lookup[i]>0){
+        $(".listItems").append("<div class='item'>"+pin[i].name+"</div>");}
+            }
+                  
+          });
+
+        });
+
+       
+
+       
+       
+      })(jQuery);
+
+
+
+
+    </script>
 
   </body>
 </html>
