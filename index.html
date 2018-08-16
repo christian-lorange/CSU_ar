@@ -34,7 +34,7 @@ body {background-color:transparent;font-family:Impact;margin:0;overflow-x:hidden
 .item {padding:20px 10px; background-color:#eee;border-bottom:1px solid #fff;font-size:18px;color:#333;text-shadow:0 1px #fff}
 .searchbox {padding:5px;background-color:#eee;border-bottom:1px solid #fff;}
 #search {box-sizing: border-box;width:100%;height:40px;font-size:16px;border-radius:20px;border:1px solid #bbb}
-#arView{display:none;}
+
 #arView{padding:30px 0; height:70px;text-align:center}
 .arMessage {color:#ddd;font-size:14px}
 #spot {text-align:center}
@@ -377,28 +377,7 @@ function stopAccelerometer() {
         watchAccelerometerID = null;
     }
 }
-// onSuccess: Get current accelerometer values
-function onAccelerometerSuccess(acceleration) {
-    // for debug purpose to print out accelerometer values
-    var element = document.getElementById('accelerometer');
-    element.innerHTML = 'Acceleration X: ' + acceleration.x + '<br />' +
-                        'Acceleration Y: ' + acceleration.y + '<br />' +
-                        'Acceleration Z: ' + acceleration.z ;
-    if(acceleration.y > 7){
-        $("#arView").fadeIn();
-        $("#topView").hide();
-        // document.getElementById('body').style.background = "#d22";
-        document.getElementById('body').style.background = "transparent";
-    } else {
-        $("#arView").hide();
-        $("#topView").fadeIn();
-        document.getElementById('body').style.background = "#fff";
-    }
-}
-// onError: Failed to get the acceleration
-function onAccelerometerError() {
-    document.getElementById('log').innerHTML += "onError.";
-}
+
 
 
     </script>
