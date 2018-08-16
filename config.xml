@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- config.xml reference: https://build.phonegap.com/docs/config-xml -->
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.orangehousecsuar.app"
+        version   = "1.0.0">
+
+    <name>CSU AR</name>
+
+    <description>Augmented Reality Passport</description>
+
+    <author href="http://orangehousellc.com" email="lorange.christian@gmail.com">
+        OrangeHouseLLC
+    </author>
+
+    
+    <content src="index.html" />
+
+    <engine name="android" />
+    <engine name="ios"  />
+
+    <preference name="permissions"                value="none"/>
+
+
+    <plugin name="cordova-plugin-whitelist" spec="1" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
+
+
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+
+
+
+    <gap:plugin name="com.ezartech.ezar.videooverlay" source="npm"/>
+    <plugin name="cordova-plugin-device-orientation"/>
+    <plugin name="cordova-plugin-device-motion" />
+    <plugin name="cordova-plugin-geolocation"  />
+    <gap:plugin name="cordova-plugin-ezar-snapshot" source="npm"/>
+
+</widget>
